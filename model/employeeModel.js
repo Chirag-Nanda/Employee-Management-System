@@ -29,7 +29,8 @@ const employeeSchema = new mongoose.Schema({
   },
   gender: {
     type : String,
-    require : true,
+    enum : ['M','F','O'],
+    default : 'O',
   },
   age : {
     type : Number,

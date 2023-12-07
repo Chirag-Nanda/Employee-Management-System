@@ -1,10 +1,10 @@
 const userModel = require("../model/userModel");
 const employeeModel = require("../model/employeeModel");
-
 const bcrypt = require('bcryptjs');
 module.exports = {
     create: async (req, res) => {
 
+      
         const newUser = new userModel();
         newUser.name = req.body.name;
         newUser.email = req.body.email;
@@ -12,14 +12,12 @@ module.exports = {
 
         //newUser.role = req.body.role;
 
-
-
         try {
             await newUser.save();
 
 
             const newEmployee = new employeeModel({
-                userId: newUser._id.toString(),
+                userId: newUser._id.toString().toUpperCase(),
                 name: newUser.name,
                 email: newUser.email,
                 address: req.body.address,
@@ -65,49 +63,19 @@ module.exports = {
                 error: err,
             });
         }
+       
+       
 
 
 
     },
 
-    login: async (req, res) => {
-        const userEmail = req.body.email;
+    login : async (req, res) => {
+        
+            const userEmail = req.body.email;
         const userPass = req.body.password;
 
-        if (!userEmail || !userPass) {
-            if(!userEmail&&!userPass){
-                return res.status(400).json({
-                    success: false,
-                    message: "Email and Password Missing"
-                });
-            }
-
-            else if(!userEmail){
-                return res.status(400).json({
-                    success: false,
-                    message: "Email Missing"
-                });
-            }
-
-            else{
-                return res.status(400).json({
-                    success: false,
-                    message: "Password Missing"
-                });
-            }
-
-        }
-
-        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-        if (!userEmail.match(validRegex)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid user email"
-            });
-        } 
-
-
+        
         try {
             const employee = await userModel.findOne({ email: userEmail });
             if (!employee) {
@@ -138,9 +106,9 @@ module.exports = {
                 error: err,
             });
         }
+        
     },
 
-
-
+   
 }
 
