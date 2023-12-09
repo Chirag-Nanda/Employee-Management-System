@@ -1,31 +1,40 @@
 const employeeModel = require("../model/employeeModel");
-
+const mongoose = require("mongoose");
 module.exports = {
-    update: (req,res)=>{
-        const Name = req.body.name;
-        const Id = req.body.userId;
-        const Email = req.body.email;
-        employeeModel.findOne
-    },
-
-    delete: async (req, res) => {
-        const Name = req.body.name;
-        const Id = req.body.userId;
-        const Email = req.body.email;
+    update: async (req,res)=>{
         try {
-            const Employee = employeeModel.findOne({ name: Name, userId: Id, email: Email });
-            if (!Employee) {
-                res.status(400).json({
-                    success: false,
-                    message: "Employee not found",
-                })
-            }
-            await employeeModel.findByIdAndDelete(Employee._id);
+            console.log(req.params);
+            await employeeModel.findByIdAndUpdate(req.params, req.body);
+            return res.status(200).json({
+                success : true,
+                message : "Employee data updated",
+            })
         } catch (err) {
             return res.status(500).json({
                 success: false,
                 message: "Internal server error",
-                error: err,
+            });
+        }
+    
+    },
+
+    delete: async (req, res) => {
+       
+        try {
+            
+            await employeeModel.findByIdAndDelete(req.params);
+
+            return res.status(200).json({
+                success : true,
+                message : "Employee data deleted",
+            })
+
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                success: false,
+                message: err,
+                
             });
         }
 

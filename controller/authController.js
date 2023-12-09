@@ -1,6 +1,8 @@
 const userModel = require("../model/userModel");
 const employeeModel = require("../model/employeeModel");
 const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv").config();
 module.exports = {
     create: async (req, res) => {
 
@@ -87,9 +89,32 @@ module.exports = {
             const hash = employee.password;
             const compareResult = bcrypt.compareSync(userPass, hash);
             if (compareResult === true) {
+                let secret_key= process.env.SECRET_KEY;
+                let tempEmployee = await employeeModel.findOne({email : userEmail});
+                let tempUser = await userModel.findOne({name : employee.name});
+                let data ={
+                    name : employee.name,
+                    email : employee.email,
+                    role : tempUser.role
+                }
+                const jwtToken = jwt.sign(data, secret_key, {expiresIn : '1hr'});
+                const newData = {
+                    name: tempEmployee.name,
+                    email: tempEmployee.email,
+                    address: tempEmployee.address,
+                    adhar: tempEmployee.adhar,
+                    phone: tempEmployee.phone,
+                    gender: tempEmployee.gender,
+                    age: tempEmployee.age,
+                    dob: tempEmployee.dob,
+                    role: tempUser.role,
+                };
+               
                 return res.status(202).json({
                     success: true,
                     message: "Login Successful",
+                    token : jwtToken,
+                    data : newData,
                 });
             }
             else {
