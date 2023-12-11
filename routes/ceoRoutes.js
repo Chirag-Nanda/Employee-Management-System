@@ -6,7 +6,6 @@ const {adminJWTValidator} = require("../middleware/adminJWTValidator");
 const {bodyValidator} = require("../middleware/bodyValidator");
 
 router.post('/ceo', bodyValidator(["name","email","address","adhar","phone","gender","age","dob"]), adminJWTValidator, ceoController.create);
-router.get('/ceo', adminJWTValidator, ceoController.fetchData);
 router.put('/ceo/:id', jwtValidator, ceoController.update);
 router.delete('/ceo/:id', adminJWTValidator, ceoController.delete);
 

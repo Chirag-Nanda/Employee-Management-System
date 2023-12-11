@@ -13,7 +13,7 @@ module.exports ={
             length: 10,
             numbers: true
         });
-
+        console.log(Pass);
 
         let oldCEOJWT = req.headers.authorization.slice(7);
         let jwtDecoded=jwt.verify(oldCEOJWT,  process.env.SECRET_KEY);
@@ -40,10 +40,10 @@ module.exports ={
 
         try {
             await newCeo.save();
-             //let oldCEO =await ceoModel.findOne({name : jwtDecoded.name});
+             let oldCEO =await ceoModel.findOne({name : jwtDecoded.name});
              let oldUser = await userModel.findOne({name : jwtDecoded.name});
-             console.log(oldUser);
-            //await ceoModel.findByIdAndDelete(oldCEO._id);
+             //console.log(oldUser);
+            await ceoModel.findByIdAndDelete(oldCEO._id);
             await userModel.findByIdAndDelete(oldUser._id);
             return res.status(201).json({
                 success: true,
@@ -70,25 +70,7 @@ module.exports ={
          }
     },
 
-    fetchData : async (req,res)=>{
-        
-        try {
-            let allData = await ceoModel.find();
-            return res.status(201).json({
-               success : true,
-               data : allData
-            });
-          }catch(err){
-            return res.status(500).json({
-             success : false,
-             message : "Internal server error"
-            })
-          }
-        
-
-
-    },
-
+    
     fetchById : async(req, res)=>{
         let tempId=req.params; 
 

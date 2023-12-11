@@ -62,14 +62,38 @@ module.exports ={
     },
 
     fetchData : async (req,res)=>{
-        
         try {
-            let allData = await supervisorModel.find();
-            return res.status(201).json({
+            
+            const pageNumber = parseInt(req.query.pageNumber)||1;
+            let limit = parseInt(req.query.limit)||5;
+            let startIndex = (pageNumber-1)*limit;
+            let data ={};
+            let allData =[];
+            
+            const emailUser = req.query.email||"";
+            const nameUser = req.query.name||"";
+            if(emailUser !=="" && nameUser !==""){
+                allData = await supervisorModel.find({name: nameUser, email : emailUser}).limit(limit).skip(startIndex);}
+            else if(emailUser !==""){
+                allData = await supervisorModel.find({ email : emailUser}).limit(limit).skip(startIndex);
+            } 
+            else if(nameUser !== ""){
+                allData = await supervisorModel.find({name : nameUser}).limit(limit).skip(startIndex);
+            } 
+            else{
+                allData = await supervisorModel.find({name : nameUser}).limit(limit).skip(startIndex);
+            }  
+                data.contents=allData;
+                data.noOfResults = limit;
+                data.pageNumber= pageNumber;
+
+            
+            return res.status(200).json({
                success : true,
-               data : allData
+               results : data,
             });
           }catch(err){
+            console.log(err);
             return res.status(500).json({
              success : false,
              message : "Internal server error"
