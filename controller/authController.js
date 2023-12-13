@@ -2,7 +2,9 @@ const userModel = require("../model/userModel");
 const employeeModel = require("../model/employeeModel");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv").config();
+
+const nodemailer = require("nodemailer");
+
 module.exports = {
     create: async (req, res) => {
 
@@ -11,8 +13,15 @@ module.exports = {
         newUser.name = req.body.name;
         newUser.email = req.body.email;
         newUser.password = bcrypt.hashSync(req.body.password, 12);
+        
+        const alreadyUser = await userModel.findOne({name : req.body.name , email: req.body.email});
 
-        //newUser.role = req.body.role;
+        if(alreadyUser){
+            return res.status(400).json({
+                success : false,
+                message : "User already exists",
+            });
+        }
 
         try {
             await newUser.save();
@@ -29,11 +38,29 @@ module.exports = {
                 age: req.body.age,
                 dob: req.body.dob,
             });
+            
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.ethereal.email',
+                port: 587,
+                auth: {
+                    user: 'quinten.morissette58@ethereal.email',
+                    pass: 'EQGuX2wZvECevKXPx1'
+                }
+            });
+              
 
 
             try {
                 await newEmployee.save();
-
+                const info = await transporter.sendMail({
+                    from: 'test1@23.com', // sender address
+                    to: req.body.email,
+                    subject: "Registration successful", // Subject line
+                    text: "Registration successful", // plain text body
+                    
+                  });
+                
+                  console.log("Message sent: %s", info.messageId);
                 return res.status(201).json({
                     success: true,
                     message: "User registered successfully",

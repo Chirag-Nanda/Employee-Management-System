@@ -2,6 +2,7 @@ const userModel= require("../model/userModel");
 const supervisorModel = require("../model/supervisorModel");
 const generator = require("generate-password");
 const bcrypt = require('bcryptjs');
+const { all } = require("../routes/departmentRoutes");
 module.exports ={
 
     create : async (req,res)=>{
@@ -12,12 +13,31 @@ module.exports ={
             length: 10,
             numbers: true
         });
+
+        const alreadyUser = await userModel.findOne({name : Name , email:Email});
+
+        if(alreadyUser){
+            return res.status(400).json({
+                success : false,
+                message : "User already exists",
+            });
+        }
          
          let newUser =new userModel();
          newUser.name = Name;
          newUser.email = Email;
          newUser.password =bcrypt.hashSync(Pass, 12); 
          newUser.role ="sp";
+
+        //  const transporter = nodemailer.createTransport({
+        //     host: 'smtp.ethereal.email',
+        //     port: 587,
+        //     auth: {
+        //         user: 'quinten.morissette58@ethereal.email',
+        //         pass: 'EQGuX2wZvECevKXPx1'
+        //     }
+        // });
+
          try {
            await newUser.save();
            const newSuperVisor = new supervisorModel({
@@ -35,7 +55,16 @@ module.exports ={
 
         try {
             await newSuperVisor.save();
-
+            
+            // const info = await transporter.sendMail({
+            //     from: 'test1@23.com', // sender address
+            //     to: req.body.email,
+            //     subject: "Registration successful", // Subject line
+            //     text: "Registration successful", // plain text body
+                
+            //   });
+            
+            //   console.log("Message sent: %s", info.messageId);
             return res.status(201).json({
                 success: true,
                 message: "User registered successfully",
@@ -81,10 +110,10 @@ module.exports ={
                 allData = await supervisorModel.find({name : nameUser}).limit(limit).skip(startIndex);
             } 
             else{
-                allData = await supervisorModel.find({name : nameUser}).limit(limit).skip(startIndex);
+                allData = await supervisorModel.find().limit(limit).skip(startIndex);
             }  
                 data.contents=allData;
-                data.noOfResults = limit;
+                data.noOfResults = allData.length;
                 data.pageNumber= pageNumber;
 
             
