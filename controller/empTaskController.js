@@ -1,11 +1,12 @@
 const employeeTaskModel = require("../model/employeeTaskModel");
 const departmentModel= require("../model/departmentModel");
 const employeeModel = require("../model/employeeModel");
+const jwt = require("jsonwebtoken");
 module.exports = {
 
     assign : async (req,res) => {
         const department = await departmentModel.findOne({name: req.body.department});  
-        
+        console.log("checkpoint touched")
         const empArr = department.employees;
         let flag=1;
         empArr.forEach((item)=>{
@@ -20,6 +21,7 @@ module.exports = {
                 message : "Unauthorised access",
             });
         }
+        
 
         const newTask = new employeeTaskModel();
         newTask.name = req.body.name;

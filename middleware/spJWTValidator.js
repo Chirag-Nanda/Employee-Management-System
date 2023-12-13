@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const deptModel = require("../model/departmentModel");
-exports.adminJWTValidator = async (req,res,next)=>{
+exports.spJWTValidator =  (req,res,next)=>{
         if(!req.headers.authorization){
             return res.status(401).json({
                success : false,
@@ -21,13 +21,14 @@ exports.adminJWTValidator = async (req,res,next)=>{
             let jwtDecoded=jwt.verify(tokenString,  process.env.SECRET_KEY);
              
             if(jwtDecoded.role==="sp"){
-                const arr = await deptModel.findOne({supervisor : jwtDecoded.name});
+                //const arr = await deptModel.findOne({supervisor : jwtDecoded.name});
                 
-                if(arr.name === req.body.deparment){
-                next();}
-                else{
-                    return "Unauthorised";
-                }
+                //if(arr.name === req.body.deparment){
+                next();
+            //}
+                //else{
+                //    return "Unauthorised";
+               // }
             }
             else{
                 throw "Unauthorised";

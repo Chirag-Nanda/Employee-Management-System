@@ -4,8 +4,8 @@ const empTaskController = require("../controller/empTaskController");
 const {bodyValidator} = require("../middleware/bodyValidator");
 const {spJWTValidator} = require("../middleware/spJWTValidator");
 router.post("/task", bodyValidator(["name","department","task"]), spJWTValidator, empTaskController.assign);
-router.update("/task/:id", bodyValidator(["name", "department", "task"]), spJWTValidator, empTaskController.update);
-router.delete("/task/:id",  spJWTValidator, empTaskController.update);
+router.put("/task/:id", bodyValidator(["name", "department", "task"]), spJWTValidator, empTaskController.update);
+router.delete("/task/:id",  spJWTValidator, empTaskController.delete);
 
 
 module.exports = router;

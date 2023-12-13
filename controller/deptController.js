@@ -22,7 +22,7 @@ module.exports = {
        department.supervisor =supervisor;
        department.employees =employees;
 
-       console.log(employId);
+       
 
        try{
          await department.save();
