@@ -5,6 +5,7 @@ const empRoutes = require("./routes/empRoutes");
 const ceoRoutes = require("./routes/ceoRoutes");
 const spRoutes = require("./routes/spRoutes");
 const departmentRoutes = require("./routes/departmentRoutes");
+const empTaskRoutes = require("./routes/empTaskRoutes");
 const dotenv = require("dotenv");
 const app= express();
 
@@ -17,6 +18,7 @@ app.use('/api', empRoutes);
 app.use('/api', spRoutes);
 app.use('/api', ceoRoutes);
 app.use('/api',departmentRoutes);
+app.use('/api',empTaskRoutes);
 
 app.listen(3000, ()=>{
     console.log('Server running at http://localhost:3000')
