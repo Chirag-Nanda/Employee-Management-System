@@ -46,22 +46,6 @@ exports.bodyValidator = (requiredFields)=>{
             }
         }
 
-        if(req.body.employees){
-            let flag = 1;
-
-            req.body.employees.forEach((item)=>{
-                if(item===req.body.supervisor){
-                    flag = 0;
-                }
-            })
-
-            if(flag){
-                return res.status(400).json({
-                    success : false,
-                    message : "Invalid employee list"
-                });
-            }
-        }
 
         next()
     }

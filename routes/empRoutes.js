@@ -71,17 +71,51 @@
  *        200:
  *          description: The employee whose ID is given is deleted.
  *        500:
- *          description: Some server error.   
+ *          description: Some server error.
+ * /api/emp/uploads: 
+ *   post:
+ *     summary: Upload employee's photo graph into the local server and updates the data in mongodb
+ *        
  */
 
 
 const express = require("express");
 const empController = require("../controller/empController");
 const router = express.Router();
+const multer = require("multer");
+
 const {jwtValidator} = require("../middleware/jwtValidator");
 const {adminJWTValidator} = require("../middleware/adminJWTValidator");
 
-router.put('/emp/:id', jwtValidator,empController.update);
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      
+      
+      cb(null, 'assets')
+    },
+    filename: function (req, file, cb) {
+      
+      if(file.mimetype.slice(6) == 'jpeg'||file.mimetype.slice(6) == 'jpg'||file.mimetype.slice(6) == 'png'){
+        cb(null, file.fieldname + '-' + 'emp'+'-'+req.params.id+ '.'+file.mimetype.slice(6))}
+      
+        else{
+          return resizeBy.status(400).json({
+            success : false,
+            message : "Invalid file format",
+          });
+        }
+       
+           
+    }
+  })
+
+
+const upload = multer({ storage: storage });
+
+router.put('/emp/:id',jwtValidator,empController.update);
+router.post('/emp/uploads/:id', jwtValidator,upload.single('Profile_photo'),empController.updatePhoto);
+
 router.delete('/emp/:id', adminJWTValidator, empController.delete);
 
 module.exports =router;

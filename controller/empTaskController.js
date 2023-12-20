@@ -1,32 +1,23 @@
 const employeeTaskModel = require("../model/employeeTaskModel");
-const departmentModel= require("../model/departmentModel");
 const employeeModel = require("../model/employeeModel");
-const jwt = require("jsonwebtoken");
+
 module.exports = {
 
     assign : async (req,res) => {
-        const department = await departmentModel.findOne({name: req.body.department});  
-        console.log("checkpoint touched")
-        const empArr = department.employees;
-        let flag=1;
-        empArr.forEach((item)=>{
-            if(item === req.body.name){
-                flag=0;
-            }
-        })
-
-        if(flag){
+        
+        const employee = await employeeModel.findById(req.body.employeeID);
+        
+        if(employee.deptID != req.body.departmentID){
             return res.status(400).json({
                 success : false,
                 message : "Unauthorised access",
             });
         }
         
-
         const newTask = new employeeTaskModel();
         newTask.name = req.body.name;
-        newTask.id = await employeeModel.findOne({name: req.body.name});
-        newTask.department = req.body.department;
+        newTask.empId = req.body.employeeID;
+        newTask.deptID = req.body.departmentID;
         newTask.task = req.body.task;
 
         try{
@@ -47,10 +38,12 @@ module.exports = {
 
     update : async (req,res) => {
        
-        const id = req.params;
+        const taskId = req.params.id;
+
+
 
         try {
-            await employeeTaskModel.findByIdAndUpdate(id, req.body);
+            await employeeTaskModel.findByIdAndUpdate(taskId, req.body);
             return res.status(201).json({
                 success : true,
                 message : "Task updated successfully",
@@ -66,10 +59,10 @@ module.exports = {
 
     delete : async(req,res) =>{
          
-        const id = req.params;
+        const taskId = req.params.id;
 
         try {
-            await employeeTaskModel.findByIdAndDelete(id);
+            await employeeTaskModel.findByIdAndDelete(taskId);
             return res.status(201).json({
                 success : true,
                 message : "Task deleted successfully",
@@ -81,6 +74,23 @@ module.exports = {
             })
         }
 
+    },
+
+    fetch : async(req, res)=>{
+         const empID = req.params.empID;
+
+         try{
+            const data = await employeeTaskModel.find({empId : empID});
+            return res.status(200).json({
+                success : true,
+                message : data,
+            })
+         }catch(err){
+            return res.status(500).json({
+                success : false,
+                message : "Internal server error",
+            })
+         }
     },
 
 }

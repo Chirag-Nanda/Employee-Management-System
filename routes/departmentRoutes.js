@@ -124,8 +124,13 @@ const router = express.Router();
 const {adminJWTValidator} = require("../middleware/adminJWTValidator");
 const deptController = require("../controller/deptController");
 const { bodyValidator } = require("../middleware/bodyValidator");
-router.post('/dept', bodyValidator(["name", "supervisor","employees"]),adminJWTValidator , deptController.create);
-router.get('/dept',adminJWTValidator,deptController.read);
-router.put('/dept/:id',adminJWTValidator, deptController.update );
+const {spJWTValidator} = require("../middleware/spJWTValidator");
+router.post('/dept', bodyValidator(["name", "supervisor","employees"]),adminJWTValidator, deptController.create);
+router.get('/dept', adminJWTValidator,deptController.read);
+router.put('/dept/:id',adminJWTValidator,deptController.update );
+router.get('/dept/:id',adminJWTValidator, deptController.fetchAdmin);
+router.get('/dept/:id', bodyValidator(["supervisor_name"]), spJWTValidator, deptController.fetchDetails);
+router.put('/dept', bodyValidator(["fromdepartmentID", "todepartmentID", "employeeID"]), adminJWTValidator ,deptController.transfer);
 router.delete('/dept/:id', adminJWTValidator, deptController.delete);
 module.exports = router;
+

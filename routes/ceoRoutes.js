@@ -120,9 +120,32 @@ const ceoController = require("../controller/ceoController");
 const {jwtValidator} = require("../middleware/jwtValidator");
 const {adminJWTValidator} = require("../middleware/adminJWTValidator");
 const {bodyValidator} = require("../middleware/bodyValidator");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'assets')
+    },
+    filename: function (req, file, cb) {
+        if(file.mimetype.slice(6) == 'jpeg'||file.mimetype.slice(6) == 'jpg'||file.mimetype.slice(6) == 'png'){
+            cb(null, file.fieldname + '-' + 'ceo'+'-'+req.params.id+ '.'+file.mimetype.slice(6))}
+          
+            else{
+              return resizeBy.status(400).json({
+                success : false,
+                message : "Invalid file format",
+              });
+            }
+               
+    }
+  })
+  
+const upload = multer({ storage: storage });
+
 
 router.post('/ceo', bodyValidator(["name","email","address","adhar","phone","gender","age","dob"]), adminJWTValidator, ceoController.create);
-router.put('/ceo/:id', jwtValidator, ceoController.update);
+router.put('/ceo/:id', adminJWTValidator, ceoController.update);
+router.post('/ceo/uploads/:id',adminJWTValidator,upload.single('Profile_photo'), ceoController.updatePhoto);
 router.delete('/ceo/:id', adminJWTValidator, ceoController.delete);
 
 module.exports =router;

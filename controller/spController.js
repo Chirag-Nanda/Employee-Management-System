@@ -3,6 +3,16 @@ const supervisorModel = require("../model/supervisorModel");
 const generator = require("generate-password");
 const bcrypt = require('bcryptjs');
 const { all } = require("../routes/departmentRoutes");
+const Datauri = require("datauri");
+const dotenv = require("dotenv");
+dotenv.config();
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_AUTHORIZATION
+  })
+
 module.exports ={
 
     create : async (req,res)=>{
@@ -56,15 +66,6 @@ module.exports ={
         try {
             await newSuperVisor.save();
             
-            // const info = await transporter.sendMail({
-            //     from: 'test1@23.com', // sender address
-            //     to: req.body.email,
-            //     subject: "Registration successful", // Subject line
-            //     text: "Registration successful", // plain text body
-                
-            //   });
-            
-            //   console.log("Message sent: %s", info.messageId);
             return res.status(201).json({
                 success: true,
                 message: "User registered successfully",
@@ -134,10 +135,10 @@ module.exports ={
     },
 
     fetchById : async(req, res)=>{
-        let tempId=req.params; 
+        let tempId=req.params.id; 
 
         try {
-            let allData = await supervisorModel.findOne({_id : tempId});
+            let allData = await supervisorModel.findById(tempId);
             return res.status(201).json({
                success : true,
                data : allData
@@ -154,7 +155,8 @@ module.exports ={
 
     update: async (req,res)=>{
         try {
-            await supervisorModel.findByIdAndUpdate(req.params, req.body);
+            
+            await supervisorModel.findByIdAndUpdate(req.params.id, req.body);
             return res.status(200).json({
                 success : true,
                 message : "Supervisor data updated",
@@ -168,15 +170,56 @@ module.exports ={
     
     },
 
+
+    updatePhoto : async(req,res)=>{
+        const image = req.file;
+        if(!image){
+            return res.status(400).json({
+                success: false,
+                message: "No image",
+            });
+        }
+
+
+            try {
+
+                const newData = req.body;
+                let dataURI = await Datauri(req.file.path);
+
+                const cldRes = await cloudinary.uploader.upload(dataURI, {
+                    resource_type: "auto",
+                });
+                
+                newData.image = cldRes.url;
+                await supervisorModel.findByIdAndUpdate(req.params.id, newData);
+                
+                
+                return res.status(200).json({
+                    success: true,
+                    message: "Supervisor data updated",
+                })
+
+            } catch (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err,
+                })
+            }
+        
+      
+
+    
+    },
+
     delete: async (req, res) => {
        
         try {
             
-            await supervisorModel.findByIdAndDelete(req.params);
+            await supervisorModel.findByIdAndDelete(req.params.id);
 
             return res.status(200).json({
                 success : true,
-                message : "Employee data deleted",
+                message : "Supervisor data deleted",
             })
 
         } catch (err) {

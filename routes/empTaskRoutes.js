@@ -90,8 +90,11 @@ const router = express.Router();
 const empTaskController = require("../controller/empTaskController");
 const {bodyValidator} = require("../middleware/bodyValidator");
 const {spJWTValidator} = require("../middleware/spJWTValidator");
-router.post("/task", bodyValidator(["name","department","task"]), spJWTValidator, empTaskController.assign);
-router.put("/task/:id", bodyValidator(["name", "department", "task"]), spJWTValidator, empTaskController.update);
+const { jwtValidator } = require("../middleware/jwtValidator");
+
+router.post("/task", bodyValidator(["name", "employeeID","departmentID","task"]), spJWTValidator, empTaskController.assign);
+router.put("/task/:id",  spJWTValidator, empTaskController.update);
+router.get("/task/:empID", jwtValidator, empTaskController.fetch);
 router.delete("/task/:id",  spJWTValidator, empTaskController.delete);
 
 

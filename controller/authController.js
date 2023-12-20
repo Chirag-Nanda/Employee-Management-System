@@ -14,7 +14,7 @@ module.exports = {
         newUser.email = req.body.email;
         newUser.password = bcrypt.hashSync(req.body.password, 12);
         
-        const alreadyUser = await userModel.findOne({name : req.body.name , email: req.body.email});
+        const alreadyUser = await userModel.findOne({email: req.body.email});
 
         if(alreadyUser){
             return res.status(400).json({
@@ -37,6 +37,7 @@ module.exports = {
                 gender: req.body.gender,
                 age: req.body.age,
                 dob: req.body.dob,
+                deptID: req.body.deptID,
             });
             
             const transporter = nodemailer.createTransport({

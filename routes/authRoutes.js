@@ -80,7 +80,7 @@ const {bodyValidator} = require("../middleware/bodyValidator"); // the import fu
 
 router.get('/login', bodyValidator(["email","password"]), authController.login); //bodyvalidator works as a middleware here
 
-router.post('/register', bodyValidator(["name","email","password","address","adhar","phone","gender","age","dob"]), authController.create);
+router.post('/register', bodyValidator(["name","email","password","address","adhar","phone","gender","age","dob","deptID"]), authController.create);
 
 
 

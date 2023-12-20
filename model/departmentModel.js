@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const employeeModel = require("./employeeModel");
 const departmentSchema = new mongoose.Schema({
    
     name : {
@@ -13,7 +13,7 @@ const departmentSchema = new mongoose.Schema({
     },
 
     employees : {
-        type: [{type: String}],
+        type: [{type: mongoose.Schema.Types.ObjectId, ref: employeeModel}],
         require : true,
     }
 

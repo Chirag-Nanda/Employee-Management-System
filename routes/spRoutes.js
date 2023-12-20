@@ -148,11 +148,35 @@ const spController = require("../controller/spController");
 const {jwtValidator} = require("../middleware/jwtValidator");
 const {adminJWTValidator} = require("../middleware/adminJWTValidator");
 const {bodyValidator} = require("../middleware/bodyValidator");
+const multer = require("multer");
+const { spJWTValidator } = require("../middleware/spJWTValidator");
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'assets')
+    },
+    filename: function (req, file, cb) {
+      if(file.mimetype.slice(6) == 'jpeg'||file.mimetype.slice(6) == 'jpg'||file.mimetype.slice(6) == 'png'){
+        cb(null, file.fieldname + '-' + 'sp'+'-'+req.params.id+ '.'+file.mimetype.slice(6))}
+      
+        else{
+          return resizeBy.status(400).json({
+            success : false,
+            message : "Invalid file format",
+          });
+        }
+         
+      
+    }
+  })
+  
+const upload = multer({ storage: storage });
 
 router.post('/sp', bodyValidator(["name","email","address","adhar","phone","gender","age","dob"]), adminJWTValidator, spController.create);
 router.get('/sp', adminJWTValidator, spController.fetchData);
-router.get('/sp/:id', jwtValidator, spController.fetchById);
+router.get('/sp/:id',jwtValidator, spController.fetchById);
 router.put('/sp/:id', jwtValidator, spController.update);
-router.delete('/sp/:id', adminJWTValidator, spController.delete);
+router.post('/sp/uploads/:id',spJWTValidator, upload.single('Profile_photo'),  spController.updatePhoto);
+router.delete('/sp/:id',adminJWTValidator, spController.delete);
 
 module.exports =router;

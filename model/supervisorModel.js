@@ -41,6 +41,10 @@ const supervisorSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    image: {
+        type: String,
+    },
+
 
 
 }); 

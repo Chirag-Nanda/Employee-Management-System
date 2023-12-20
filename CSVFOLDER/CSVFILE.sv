@@ -1,0 +1,5 @@
+﻿Name  ,Email ,Address,Adhar,Phone,Gender,Age ,DOB,Role,DepartmentName,DepartmentID,,,,,
+Chi10 ,IamChi10@1.com,wwwer,261721212121,1234567,M,11,11/09/2002,emp,NOOB_TASK_FORCE,658189beb8e88ee7a3ddc2a2,,,,,
+Chi4,IamChi4@1.com,wwwer,261721212122,1234567,M,12,11/09/2003,sp,IT,65818971b8e88ee7a3ddc29f,,,,,
+Chi6,IamChi6@1.com,wwwer,261721212123,1234567,M,13,11/09/2004,emp,ELITE_TASK_FORCE,65818971b8e88ee7a3ddc29f,,,,,
+Chi7,IamChi7@1.com,wwwer,261721212124,1234567,M,14,11/09/2005,emp,AI,658189beb8e88ee7a3ddc2a2,,,,,

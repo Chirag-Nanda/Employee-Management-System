@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
-
+const userModel = require("./userModel");
 
 const employeeSchema = new mongoose.Schema({
   userId : {
     type : mongoose.Schema.Types.ObjectId,
+    //ref : userModel,
     require : true,
+  },
+  
+  image : {
+    type : String,
   },
 
   name: {
@@ -40,6 +45,11 @@ const employeeSchema = new mongoose.Schema({
     type : String,
     require : true,
   },
+
+  deptID: {
+    type: mongoose.Schema.Types.ObjectId,
+    require : true, 
+  }
 
 });
 
