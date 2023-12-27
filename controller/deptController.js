@@ -1,32 +1,29 @@
 const deptModel = require("../model/departmentModel");
+const supervisorModel = require("../model/supervisorModel");
 const mongoose= require("mongoose");
 module.exports = {
     
     create : async (req,res)=>{
        const name = req.body.name;
-       const supervisor = req.body.supervisor;
        const employees = req.body.employees;
        
 
-       //const alrDepartMent = await deptModel.findOne({name : name});
        
-       /*if(alrDepartMent){
-        return res.status(400).json({
-          success : false,
-          message : "department already exists",
-        })
-       }*/
+       
 
        const department = new deptModel();
        department.name =name;
-       department.supervisor =supervisor;
+      
        department.employees = employees;
        
        
 
        try{
          await department.save();
-
+        
+          await supervisorModel.findByIdAndUpdate(req.body.supervisor, {deptID: department._id});
+        
+           
          return res.status(200).json({
             success : true,
             message : "department created",
@@ -72,7 +69,7 @@ module.exports = {
 
     readById : async(req,res)=>{
       
-        let tempId=req.params; 
+        let tempId=req.params.id; 
 
         try {
             let allData = await deptModel.findById(tempId);
@@ -200,6 +197,35 @@ module.exports = {
 
     },
 
+    sptransfer: async(req,res)=>{
+     
+      const supervisor = await supervisorModel.findById(req.body.supervisorID);
+
+      if(supervisor.deptID != req.body.fromdepartmentID){
+        return res.status(400).json({
+          success : false,
+          message : "supervisor not in the department",
+        })
+      }
+
+      supervisor.deptID = req.body.todepartmentID;
+
+      try{
+         await supervisor.save();
+         return res.status(200).json({
+          success : true,
+          message : "transfer_complete",
+        })
+      }catch(err){
+        return res.status(500).json({
+          success : false,
+          message : "Internal server error",
+        })
+      }
+
+
+    },
+
 
     fetchAdmin : async(req,res) =>{
        
@@ -237,8 +263,9 @@ module.exports = {
     fetchDetails: async(req,res) =>{
        
       try{
-        const department = await deptModel.findById(req.params.id);
-        if(req.body.name != department.supervisor){
+        
+        const supervisor = await supervisorModel.findById(req.body.supervisor_ID);
+        if(req.params.id != supervisor.deptID){
           return res.status(400).json({
             success : false,
             message : "Unauthorized access",
@@ -246,11 +273,10 @@ module.exports = {
         }
 
         else{
-
+          const department = await deptModel.findById(req.params.id);
           var newData = {};
           newData.nameOfDepartment = department.name;
           newData.employees= department.employees;
-          newData.supervisor = department.supervisor;
           newData.noOfEmployees = department.employees.length;
 
           return res.status(200).json({

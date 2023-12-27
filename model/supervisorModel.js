@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const departmentModel = require("./departmentModel");
 const supervisorSchema = new mongoose.Schema({
     userId: {
         type: String,
@@ -44,7 +44,10 @@ const supervisorSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-
+    deptID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : departmentModel,
+      }
 
 
 }); 

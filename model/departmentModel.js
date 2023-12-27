@@ -7,10 +7,6 @@ const departmentSchema = new mongoose.Schema({
         require : true,
     },
 
-    supervisor : {
-        type : String,
-        require : true,
-    },
 
     employees : {
         type: [{type: mongoose.Schema.Types.ObjectId, ref: employeeModel}],

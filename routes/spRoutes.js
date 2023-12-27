@@ -172,7 +172,7 @@ const storage = multer.diskStorage({
   
 const upload = multer({ storage: storage });
 
-router.post('/sp', bodyValidator(["name","email","address","adhar","phone","gender","age","dob"]), adminJWTValidator, spController.create);
+router.post('/sp', bodyValidator(["name","email","address","adhar","phone","gender","age","dob"]), adminJWTValidator,spController.create);
 router.get('/sp', adminJWTValidator, spController.fetchData);
 router.get('/sp/:id',jwtValidator, spController.fetchById);
 router.put('/sp/:id', jwtValidator, spController.update);
